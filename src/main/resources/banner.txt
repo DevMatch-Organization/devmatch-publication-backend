@@ -1,0 +1,6 @@
+${AnsiBackground.RED}${AnsiColor.BLACK},------.                      ,--.   ,--.            ,--.          ,--                                  ${AnsiBackground.DEFAULT}
+${AnsiBackground.BLUE}${AnsiColor.BLACK}|  .-.  \   ,---.  ,--.  ,--. |   `.'   |  ,--,--. ,-'  '-.  ,---. |  ,---.    ──────▄▀▄─────▄▀▄        ${AnsiBackground.DEFAULT}
+${AnsiBackground.YELLOW}${AnsiColor.BLACK}|  |  \  : | .-. :  \  `'  /  |  |'.'|  | ' ,-.  | '-.  .-' | .--' |  .-.  |   ─────▄█░░▀▀▀▀▀░░█▄       ${AnsiBackground.DEFAULT}
+${AnsiBackground.GREEN}${AnsiColor.BLACK}|  '--'  / \   --.   \    /   |  |   |  | \ '-'  |   |  |   \ `--. |  | |  |   ─▄▄──█░░░░░░░░░░░█──▄▄   ${AnsiBackground.DEFAULT}
+${AnsiBackground.MAGENTA}${AnsiColor.BLACK}`-------'   `----'    `--'    `--'   `--'  `--`--'   `--'    `---' `--' `--'   █▄▄█─█░░▀░░┬░░▀░░█─█▄▄█  ${AnsiBackground.DEFAULT}
+${AnsiBackground.DEFAULT}${AnsiColor.DEFAULT}

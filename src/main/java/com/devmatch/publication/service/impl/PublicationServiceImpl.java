@@ -3,7 +3,6 @@ package com.devmatch.publication.service.impl;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.devmatch.lib.util.Utils;
 import com.devmatch.publication.document.Publication;
 import com.devmatch.publication.dto.PublicationDto;
 import com.devmatch.publication.form.PublicationPatchDescription;
@@ -21,6 +20,7 @@ import reactor.core.publisher.Mono;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -124,6 +124,6 @@ public class PublicationServiceImpl implements PublicationService {
     }
 
     private String buildFileName(String name, String type) {
-        return String.format("%s/%s/%s", type, Utils.generateUUID(),  "content." + name.substring(name.lastIndexOf('.') + 1));
+        return String.format("%s/%s/%s", type, UUID.randomUUID(),  "content." + name.substring(name.lastIndexOf('.') + 1));
     }
 }

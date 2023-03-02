@@ -4,6 +4,10 @@ import com.devmatch.publication.dto.PublicationDto;
 import com.devmatch.publication.form.PublicationPatchDescription;
 import com.devmatch.publication.form.PublicationPost;
 import com.devmatch.publication.service.PublicationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +28,18 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping("/publication")
 @Slf4j
+@Tag(name = "Publication")
 public class PublicationWriteController {
 
     @Autowired
     private PublicationService service;
 
+    @Operation(summary = "Criar uma Publicação")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Recurso criado com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Operação inválida."),
+            @ApiResponse(responseCode = "500", description = "Erro interno ao realizar operação."),
+    })
     @PostMapping(consumes = { MediaType.ALL_VALUE })
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<PublicationDto> postCreate(
@@ -39,6 +50,13 @@ public class PublicationWriteController {
         return service.create(publicationPost, filePart);
     }
 
+    @Operation(summary = "Editar a descrição de uma Publicação")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Operação realizada com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Operação inválida."),
+            @ApiResponse(responseCode = "404", description = "O recurso não foi encontrado."),
+            @ApiResponse(responseCode = "500", description = "Erro interno ao realizar operação."),
+    })
     @PatchMapping("{id}")
     public Mono<PublicationDto> patchDescription(
             @PathVariable("id") String id,
@@ -48,6 +66,13 @@ public class PublicationWriteController {
         return service.updateDescription(id, publicationPatchDescription);
     }
 
+    @Operation(summary = "Remover uma Publicação")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Operação realizada com sucesso, mas não retornou conteúdo."),
+            @ApiResponse(responseCode = "400", description = "Operação inválida."),
+            @ApiResponse(responseCode = "404", description = "O recurso não foi encontrado."),
+            @ApiResponse(responseCode = "500", description = "Erro interno ao realizar operação."),
+    })
     @DeleteMapping("{id}")
     public Mono<Void> delete(
             @PathVariable("id") String id

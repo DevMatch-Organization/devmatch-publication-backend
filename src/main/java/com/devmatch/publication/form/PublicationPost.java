@@ -2,6 +2,7 @@ package com.devmatch.publication.form;
 
 import com.devmatch.publication.document.Publication;
 import com.devmatch.publication.model.enums.TypePublicationEnum;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

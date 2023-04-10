@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.info.License;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 @OpenAPIDefinition(info = @Info(
         title = "Publication Devmatch Api",
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
         contact = @Contact(url = "https://github.com/DevMatch-Organization", name = "DevMatch Organization", email = "guhdalla011@gmail.com")
 ))
 @Configuration
+@PropertySource("classpath:swagger.properties")
 public class SwaggerConfig {
 
     @Bean

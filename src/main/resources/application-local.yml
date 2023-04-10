@@ -18,6 +18,9 @@ logging:
           mongodb:
             core:
               MongoTemplate: DEBUG
+    com:
+      devmatch:
+        publication: DEBUG
 
 ## EUREKA ##
 eureka:

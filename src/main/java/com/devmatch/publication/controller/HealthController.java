@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class HealthController {
 
     @GetMapping
-    @Operation(summary = "Verificar saúde da aplicação")
+    @Operation(summary = "${publication_health}")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Operação realizada com sucesso."),
+            @ApiResponse(responseCode = "200", description = "${response_description_200}"),
     })
     public String health(){
         return "OK";

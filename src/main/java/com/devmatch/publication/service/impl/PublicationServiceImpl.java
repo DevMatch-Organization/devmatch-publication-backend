@@ -7,19 +7,24 @@ import com.devmatch.publication.document.Publication;
 import com.devmatch.publication.dto.PublicationDto;
 import com.devmatch.publication.form.PublicationPatchDescription;
 import com.devmatch.publication.form.PublicationPost;
+import com.devmatch.publication.model.mapper.PublicationMapper;
 import com.devmatch.publication.repository.PublicationRepository;
 import com.devmatch.publication.service.PublicationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -38,12 +43,12 @@ public class PublicationServiceImpl implements PublicationService {
     private String bucketName;
 
     @Override
-    public Mono<PublicationDto> create(Mono<PublicationPost> publicationPost, Mono<FilePart> filePart) {
+    public Mono<PublicationDto> create(PublicationPost publicationPost, Mono<FilePart> filePart) {
         return filePart
                 .flatMap(fp -> createTempFile(fp))
-                .zipWith(publicationPost, (f, p) -> {
-                    Publication publication = p.toDocument();
-                    String key = uploadContentToBucket(f, buildFileName(f.getName(), publication.getType().toString()));
+                .map(tempFile -> {
+                    Publication publication = publicationPost.toDocument();
+                    String key = uploadContentToBucket(tempFile, buildFileName(tempFile.getName(), publication.getType().toString()));
                     publication.setContent(key);
                     return publication;
                 })
@@ -52,29 +57,38 @@ public class PublicationServiceImpl implements PublicationService {
     }
 
     @Override
-    public Mono<PublicationDto> updateDescription(String id, Mono<PublicationPatchDescription> publicationPatchDescription) {
+    public Mono<PublicationDto> updateDescription(String id, PublicationPatchDescription publicationPatchDescription) {
         return repository.findById(id)
-                .zipWith(publicationPatchDescription, (p, pPatchDescription) -> {
-                    p.setDescription(pPatchDescription.getDescription());
-                    return p;
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatusCode.valueOf(404), "A Publicação não foi encontrada.")))
+                .map(publication -> {
+                    publication.setDescription(publicationPatchDescription.getDescription());
+                    return publication;
                 })
                 .flatMap(p -> repository.save(p))
                 .map(PublicationDto::new);
     }
 
     @Override
-    public Mono<Publication> findById(String id) {
-        return repository.findById(id);
+    public Mono<PublicationDto> findById(String id) {
+        return repository.findById(id)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatusCode.valueOf(404), "A Publicação não foi encontrada.")))
+                .map(PublicationDto::new);
     }
 
     @Override
-    public Flux<Publication> findAll() {
-        return repository.findAll();
+    public Flux<PublicationDto> findAll(Integer page, Integer size, String sortField, Sort.Direction sortDirection) {
+        return repository.findAll(
+                Objects.isNull(sortField) || Objects.isNull(sortDirection)?
+                        Sort.by(Sort.Direction.ASC, "id") : Sort.by(sortDirection, sortField))
+                .skip(page * size)
+                .take(size)
+                .map(PublicationMapper::toDto);
     }
 
     @Override
     public Mono<Void> delete(String id) {
         return repository.findById(id)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatusCode.valueOf(404), "A Publicação não foi encontrada.")))
                 .flatMap(p -> removeBucketContent(p))
                 .flatMap(p -> repository.deleteById(p.getId()))
                 .then();
